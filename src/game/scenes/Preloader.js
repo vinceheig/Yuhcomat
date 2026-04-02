@@ -42,6 +42,20 @@ export class Preloader extends Scene
             frameHeight: 576,
             endFrame: 21
         });
+        this.load.audio('explosion1', 'explosion1.wav');
+        this.load.audio('explosion2', 'explosion2.wav');
+        this.load.audio('fahhh', 'fahhh.mp3');
+        this.load.audio('bonus', 'Bonus.mp3');
+        this.load.audio('shield', 'shield.mp3');
+        this.load.audio('coins', 'coins.mp3');
+        this.load.audio('bell1', 'bell1.wav');
+        this.load.audio('pl_step1', 'pl_step1.wav');
+        this.load.audio('pl_step2', 'pl_step2.wav');
+        this.load.audio('pl_step3', 'pl_step3.wav');
+        this.load.audio('pl_step4', 'pl_step4.wav');
+        this.load.audio('game1', 'Game1.mp3');
+        this.load.audio('game2', 'Game2.mp3');
+        this.load.audio('mainMenu', 'mainMenu.mp3');
     }
 
     createGeneratedTexture (key, drawFn)

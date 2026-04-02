@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getSoundVolume } from '../AudioConfig';
 
 export class Obstacle {
     constructor(scene, config) {
@@ -20,6 +21,7 @@ export class Obstacle {
         this.travelY = this.spawnY;
         this.reactionToHits = config.reactionToHits ?? (() => {});
         this.soundEffectToPlay = config.soundEffectToPlay ?? null;
+        this.blockedSoundEffectToPlay = config.blockedSoundEffectToPlay ?? null;
 
         const startX = this.getLaneCenterXAtY(this.columnPosition, this.spawnY);
 
@@ -61,8 +63,18 @@ export class Obstacle {
             return false;
         }
 
-        if (this.soundEffectToPlay && this.scene.cache.audio.exists(this.soundEffectToPlay)) {
-            this.scene.sound.play(this.soundEffectToPlay);
+        const isBlockedHit = player.isInvincible() && this.blockedSoundEffectToPlay;
+        const soundSource = isBlockedHit ? this.blockedSoundEffectToPlay : this.soundEffectToPlay;
+        const soundKeys = Array.isArray(soundSource)
+            ? soundSource
+            : [soundSource];
+        const availableSoundKeys = soundKeys.filter((soundKey) => soundKey && this.scene.cache.audio.exists(soundKey));
+
+        if (availableSoundKeys.length > 0) {
+            const selectedSoundKey = Phaser.Utils.Array.GetRandom(availableSoundKeys);
+            this.scene.sound.play(selectedSoundKey, {
+                volume: getSoundVolume(selectedSoundKey)
+            });
         }
 
         this.reactionToHits(player, this);

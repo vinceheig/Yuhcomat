@@ -1,6 +1,7 @@
 import { EventBus } from '../EventBus';
 import { GameWorld } from '../GameWorld';
 import { Scene } from 'phaser';
+import { getSoundVolume } from '../AudioConfig';
 
 export class Game extends Scene
 {
@@ -18,6 +19,16 @@ export class Game extends Scene
 
         this.cameras.main.setBackgroundColor(0x12321a);
         this.add.image(width / 2, height / 2, 'background').setDisplaySize(width, height).setAlpha(0.35);
+
+        this.sound.stopByKey('mainMenu');
+        this.sound.stopByKey('game1');
+        this.sound.stopByKey('game2');
+
+        const gameMusic = Math.random() < 0.5 ? 'game1' : 'game2';
+        this.sound.play(gameMusic, {
+            loop: true,
+            volume: getSoundVolume(gameMusic)
+        });
 
         this.gameWorld = new GameWorld(this, {
             playerName: 'Player 1',

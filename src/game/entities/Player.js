@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getSoundVolume } from '../AudioConfig';
 
 export class Player {
     constructor(scene, config) {
@@ -15,6 +16,9 @@ export class Player {
         this.hitboxHeight = config.hitboxHeight ?? Math.round(this.baseSize * 0.98);
         this.defaultInvincibilityDurationMs = config.defaultInvincibilityDurationMs ?? 2500;
         this.invincibleUntilMs = 0;
+        this.stepSoundKeys = ['pl_step1', 'pl_step2', 'pl_step3', 'pl_step4'];
+        this.stepIntervalMs = config.stepIntervalMs ?? 220;
+        this.nextStepSoundAtMs = 0;
 
         const startX = this.getLaneCenterXAtY(this.columnPosition, this.y);
 
@@ -61,17 +65,51 @@ export class Player {
             this.sprite.clearTint();
         }
 
+        this.playContinuousFootsteps();
+
         this.syncHitbox();
     }
 
     moveLeft() {
-        this.columnPosition = Phaser.Math.Clamp(this.columnPosition - 1, 0, this.laneCount - 1);
+        const nextPosition = Phaser.Math.Clamp(this.columnPosition - 1, 0, this.laneCount - 1);
+        if (nextPosition === this.columnPosition) {
+            return;
+        }
+
+        this.columnPosition = nextPosition;
         this.sprite.x = this.getLaneCenterXAtY(this.columnPosition, this.sprite.y);
     }
 
     moveRight() {
-        this.columnPosition = Phaser.Math.Clamp(this.columnPosition + 1, 0, this.laneCount - 1);
+        const nextPosition = Phaser.Math.Clamp(this.columnPosition + 1, 0, this.laneCount - 1);
+        if (nextPosition === this.columnPosition) {
+            return;
+        }
+
+        this.columnPosition = nextPosition;
         this.sprite.x = this.getLaneCenterXAtY(this.columnPosition, this.sprite.y);
+    }
+
+    playContinuousFootsteps() {
+        if (this.scene.time.now < this.nextStepSoundAtMs) {
+            return;
+        }
+
+        this.playStepSound();
+        this.nextStepSoundAtMs = this.scene.time.now + this.stepIntervalMs;
+    }
+
+    playStepSound() {
+        const availableStepKeys = this.stepSoundKeys.filter((soundKey) => this.scene.cache.audio.exists(soundKey));
+
+        if (availableStepKeys.length === 0) {
+            return;
+        }
+
+        const randomKey = Phaser.Utils.Array.GetRandom(availableStepKeys);
+        this.scene.sound.play(randomKey, {
+            volume: getSoundVolume(randomKey)
+        });
     }
 
     activateStarPowerup(config = {}) {

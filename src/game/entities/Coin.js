@@ -7,7 +7,7 @@ export class Coin extends Obstacle {
             speed: config.speed ?? 320,
             textureKey: 'coin',
             baseSize: 52,
-            soundEffectToPlay: 'coin-hit',
+            soundEffectToPlay: 'coins',
             reactionToHits: (player) => {
                 player.addScore(10);
             }

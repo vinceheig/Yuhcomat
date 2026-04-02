@@ -7,7 +7,7 @@ export class StarBoost extends Obstacle {
             speed: config.speed ?? 320,
             textureKey: 'star',
             baseSize: 54,
-            soundEffectToPlay: 'coin-hit',
+            soundEffectToPlay: 'bonus',
             reactionToHits: (player) => {
                 player.activateStarPowerup();
                 config.onCollected?.(player);

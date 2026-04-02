@@ -1,5 +1,6 @@
 import { EventBus } from '../EventBus';
 import Phaser, { Scene } from 'phaser';
+import { getSoundVolume } from '../AudioConfig';
 
 export class HowToPlay extends Scene
 {
@@ -17,6 +18,16 @@ export class HowToPlay extends Scene
         const uiScale = Math.min(width / 1024, height / 768);
 
         this.add.image(width / 2, height / 2, 'background').setDisplaySize(width, height).setAlpha(0.55);
+
+        this.sound.stopByKey('game1');
+        this.sound.stopByKey('game2');
+
+        if (!this.sound.getAllPlaying().some((sound) => sound.key === 'mainMenu')) {
+            this.sound.play('mainMenu', {
+                loop: true,
+                volume: getSoundVolume('mainMenu')
+            });
+        }
 
         this.add.text(width / 2, height * 0.1, 'How To Play', {
             fontFamily: 'Arial Black',
